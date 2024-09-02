@@ -18,6 +18,12 @@ Steps involved:
 
 Once deployed, the container can be pulled and run using the following steps:
 
+0) Login to the the EC2 instance by executing "from a local machine":
+
+$ ssh -i "resilia-key-pair.pem" ec2-user@ec2-3-133-12-163.us-east-2.compute.amazonaws.com
+
+(replace the IP adderess with the relevant one that can be obtained from the Networking tab found in the instance Console).
+
 1) The EC2 IAM user has to be root to perform Docker tasks:
 
 $ sudo su
@@ -26,9 +32,40 @@ $ sudo su
 
 $ docker ps
 
-3) If the desired image is available, execute:
+3a) If the desired image is available, execute:
 
 $ docker run -d -p 80:80 --name ersiliaos/eos3b5e
+
+3b) If not, pull the image and then run:
+
+$ docker pull ersiliaos/eos3b5e
+
+$ docker ps
+
+$ docker run -d -p 80:80 --name ersiliaos/eos3b5e
+
+These steps can be placed in a script to be run at EC2 instance startup time.
+
+Refer to:
+
+startup_script.py.
+
+### Setting Up the Startup Script:
+1. **Save the Script**: Save the above script as `startup_script.py`.
+2. **Make the Script Executable**:
+   ```bash
+   chmod +x startup_script.py
+   ```
+3. **Configure EC2 Instance**:
+   - Use the EC2 User Data feature to run this script at instance launch. You can add the following to the User Data section when launching an EC2 instance:
+
+   ```bash
+   #!/bin/bash
+   yum update -y
+   yum install -y docker
+   service docker start
+   # Replace the following line with the path to your startup script
+   python3 /path/to/startup_script.py.
 
 4) Test if the image "locally":
 
