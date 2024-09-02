@@ -1,3 +1,54 @@
+# Ersilia.io Assignment
+
+Container deployment was done with two options
+
+OPTION 1 - DIRECTLY TO EC2
+
+Steps involved:
+
+1) Create VPC;
+2) Create IAM Roles for:
+  a) A non-root user with access rights to create and manage resources;
+  b) A dedicated EC2 user to execute tasks inside the instance.
+3) Create Security Group(s);
+4) Create Networking Resources:
+  a) Network Interface;
+  b) Subnet(s).
+5) AZs.
+
+Once deployed, the container can be pulled and run using the following steps:
+
+1) The EC2 IAM user has to be root to perform Docker tasks:
+
+$ sudo su
+
+2) List available containers:
+
+$ docker ps
+
+3) If the desired image is available, execute:
+
+$ docker run -d -p 80:80 --name ersiliaos/eos3b5e
+
+4) Test if the image "locally":
+
+$ curl -X POST "http://localhost/info" -H "accept: */*" -H "Content-Type: application/json" -d "{}"
+
+$ curl -X POST "http://localhost/run" -H "accept: */*" -H "Content-Type: application/json" -d "[{\"input\":\"CC(=O)OC1=CC=CC=C1C(=O)O\"}]"
+
+5) Test if the image is available on the public internet by executing the following from a local machine, i.e. NOT from within the created EC2 instance:
+
+$ curl -X POST "http://ec2-3-133-12-163.us-east-2.compute.amazonaws.com/run" -H "accept: */*" -H "Content-Type: application/json" -d "[{\"input\":\"CC(=O)OC1=CC=CC=C1C(=O)O\"}]"
+
+This call can be made using the .py file provided by executing:
+
+$ python3 ./molmass.py
+
+
+OPTION 2 - CLUSTERED INFRASTRUCTURE USING ECS AND FARGATE
+
+Refer to cdk stack.
+
 
 # Welcome to your CDK Python project!
 
